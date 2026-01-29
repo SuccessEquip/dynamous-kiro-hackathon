@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORE Framework - Interactive Project Planning</title>
+    <meta name="description" content="Transform vague ideas into actionable project plans through a structured 4-phase methodology">
+    
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            width: 100%;
+        }
+
+        /* Progress navigation */
+        .progress-nav {
+            margin-bottom: 3rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            list-style: none;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e9ecef;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            background: #f8f9fa;
+            padding: 0.5rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: #667eea;
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+
+        .step-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .step.active .step-name {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Session controls */
+        .session-controls {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .session-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .session-info label {
+            font-weight: 500;
+        }
+
+        .session-info input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .session-info button {
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .session-info button:hover {
+            background: #5a6fd8;
+        }
+
+        /* Phase sections */
+        .phase-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .phase-section.active {
+            display: block;
+        }
+
+        .phase-section h2 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .phase-description {
+            color: #6c757d;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Question groups */
+        .question-group {
+            margin-bottom: 2rem;
+        }
+
+        .question-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #495057;
+            font-size: 1.1rem;
+        }
+
+        .question-number {
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .question-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .question-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .question-group textarea.invalid {
+            border-color: #dc3545;
+        }
+
+        .guidance {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .validation-message {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #dc3545;
+            display: none;
+        }
+
+        .validation-message.show {
+            display: block;
+        }
+
+        /* Navigation controls */
+        .phase-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+        }
+
+        .phase-navigation button {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .phase-navigation button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #prev-phase {
+            background: #6c757d;
+            color: white;
+        }
+
+        #prev-phase:hover:not(:disabled) {
+            background: #5a6268;
+        }
+
+        #next-phase {
+            background: #667eea;
+            color: white;
+        }
+
+        #next-phase:hover:not(:disabled) {
+            background: #5a6fd8;
+        }
+
+        /* Output section */
+        .output-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .output-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .output-controls button {
+            padding: 0.5rem 1rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .output-controls button:hover {
+            background: #218838;
+        }
+
+        .output-content {
+            position: relative;
+        }
+
+        #output-display {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            resize: vertical;
+        }
+
+        .output-content button {
+            margin-top: 1rem;
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .progress-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .progress-steps::before {
+                display: none;
+            }
+
+            .session-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .session-info input {
+                min-width: auto;
+            }
+
+            .phase-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .output-controls {
+                flex-direction: column;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .step-number {
+                border: 2px solid currentColor;
+            }
+            
+            .question-group textarea:focus {
+                border-width: 3px;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+            }
+        }
+
+        /* Focus indicators for keyboard navigation */
+        button:focus,
+        input:focus,
+        textarea:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Equip phase specific styles */
+        .equip-actions {
+            max-width: 600px;
+        }
+
+        .action-group h3 {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .action-group > p {
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+        }
+
+        .action-option {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            transition: border-color 0.2s;
+        }
+
+        .action-option:hover {
+            border-color: #667eea;
+        }
+
+        .action-option input[type="radio"] {
+            margin-right: 0.75rem;
+            transform: scale(1.2);
+        }
+
+        .action-option label {
+            display: block;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .action-option label strong {
+            display: block;
+            color: #495057;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .action-option input[type="radio"]:checked + label {
+            color: #667eea;
+        }
+
+        .action-option input[type="radio"]:checked + label strong {
+            color: #667eea;
+        }
+
+        .action-option:has(input[type="radio"]:checked) {
+            border-color: #667eea;
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .generate-section {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .generate-btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .generate-btn:hover {
+            background: #218838;
+        }
+
+        .generate-note {
+            margin-top: 1rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header role="banner">
+        <h1>CORE Framework</h1>
+        <p>Interactive Project Planning Tool</p>
+    </header>
+
+    <main role="main">
+        <!-- Progress indicator -->
+        <nav aria-label="Progress" class="progress-nav">
+            <ol class="progress-steps">
+                <li class="step active" data-phase="clarify">
+                    <span class="step-number">1</span>
+                    <span class="step-name">Clarify</span>
+                </li>
+                <li class="step" data-phase="organize">
+                    <span class="step-number">2</span>
+                    <span class="step-name">Organize</span>
+                </li>
+                <li class="step" data-phase="refine">
+                    <span class="step-number">3</span>
+                    <span class="step-name">Refine</span>
+                </li>
+                <li class="step" data-phase="equip">
+                    <span class="step-number">4</span>
+                    <span class="step-name">Equip</span>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Session management -->
+        <section class="session-controls" aria-label="Session Management">
+            <div class="session-info">
+                <label for="session-name">Session Name:</label>
+                <input type="text" id="session-name" placeholder="My Project Planning Session" maxlength="100">
+                <button type="button" id="save-session">Save Session</button>
+                <button type="button" id="load-session">Load Session</button>
+            </div>
+        </section>
+
+        <!-- Phase content areas -->
+        <form id="core-framework-form" novalidate>
+            <!-- Phase 1: Clarify -->
+            <section class="phase-section active" id="phase-clarify" aria-labelledby="clarify-heading">
+                <h2 id="clarify-heading">Phase 1: Clarify</h2>
+                <p class="phase-description">Define project purpose and scope</p>
+                
+                <div class="question-group">
+                    <label for="c-01" class="question-label">
+                        <span class="question-number">1.</span>
+                        What problem does this project solve, and for whom?
+                    </label>
+                    <textarea 
+                        id="c-01" 
+                        name="c-01" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="500"
+                        aria-describedby="c-01-guidance"
+                    ></textarea>
+                    <div id="c-01-guidance" class="guidance">
+                        Think about the core pain point your project addresses. Be specific about your target users and their current struggles.
+                    </div>
+                    <div class="validation-message" id="c-01-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="c-02" class="question-label">
+                        <span class="question-number">2.</span>
+                        What does success look like for this project in 6 months?
+                    </label>
+                    <textarea 
+                        id="c-02" 
+                        name="c-02" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="400"
+                        aria-describedby="c-02-guidance"
+                    ></textarea>
+                    <div id="c-02-guidance" class="guidance">
+                        Describe concrete, measurable outcomes. What will be different in the world when your project succeeds?
+                    </div>
+                    <div class="validation-message" id="c-02-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="c-03" class="question-label">
+                        <span class="question-number">3.</span>
+                        What unique value does your solution provide that alternatives don't?
+                    </label>
+                    <textarea 
+                        id="c-03" 
+                        name="c-03" 
+                        rows="3" 
+                        required 
+                        minlength="30" 
+                        maxlength="300"
+                        aria-describedby="c-03-guidance"
+                    ></textarea>
+                    <div id="c-03-guidance" class="guidance">
+                        Focus on your competitive advantage. What makes your approach special or different?
+                    </div>
+                    <div class="validation-message" id="c-03-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="c-04" class="question-label">
+                        <span class="question-number">4.</span>
+                        Describe the ideal user experience from problem to solution.
+                    </label>
+                    <textarea 
+                        id="c-04" 
+                        name="c-04" 
+                        rows="5" 
+                        required 
+                        minlength="100" 
+                        maxlength="600"
+                        aria-describedby="c-04-guidance"
+                    ></textarea>
+                    <div id="c-04-guidance" class="guidance">
+                        Walk through the complete user journey. How do users discover, try, and succeed with your solution?
+                    </div>
+                    <div class="validation-message" id="c-04-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="c-05" class="question-label">
+                        <span class="question-number">5.</span>
+                        What is explicitly NOT included in this project's scope?
+                    </label>
+                    <textarea 
+                        id="c-05" 
+                        name="c-05" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="400"
+                        aria-describedby="c-05-guidance"
+                    ></textarea>
+                    <div id="c-05-guidance" class="guidance">
+                        Clear boundaries prevent scope creep. What related problems will you NOT solve?
+                    </div>
+                    <div class="validation-message" id="c-05-error" role="alert"></div>
+                </div>
+            </section>
+
+            <!-- Phase 2: Organize -->
+            <section class="phase-section" id="phase-organize" aria-labelledby="organize-heading">
+                <h2 id="organize-heading">Phase 2: Organize</h2>
+                <p class="phase-description">Structure requirements and priorities</p>
+                
+                <div class="question-group">
+                    <label for="o-01" class="question-label">
+                        <span class="question-number">6.</span>
+                        What are the 3-5 essential features that deliver your core value?
+                    </label>
+                    <textarea 
+                        id="o-01" 
+                        name="o-01" 
+                        rows="4" 
+                        required 
+                        minlength="100" 
+                        maxlength="500"
+                        aria-describedby="o-01-guidance"
+                    ></textarea>
+                    <div id="o-01-guidance" class="guidance">
+                        Focus on must-have features that directly support your value proposition. Avoid nice-to-haves.
+                    </div>
+                    <div class="validation-message" id="o-01-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="o-02" class="question-label">
+                        <span class="question-number">7.</span>
+                        Who are your different user types and what does each need?
+                    </label>
+                    <textarea 
+                        id="o-02" 
+                        name="o-02" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="400"
+                        aria-describedby="o-02-guidance"
+                    ></textarea>
+                    <div id="o-02-guidance" class="guidance">
+                        Different users may need different features or experiences. Be specific about user segments.
+                    </div>
+                    <div class="validation-message" id="o-02-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="o-03" class="question-label">
+                        <span class="question-number">8.</span>
+                        What's the smallest version that delivers real value to users?
+                    </label>
+                    <textarea 
+                        id="o-03" 
+                        name="o-03" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="400"
+                        aria-describedby="o-03-guidance"
+                    ></textarea>
+                    <div id="o-03-guidance" class="guidance">
+                        Your MVP should solve the core problem for at least one user type. What can you cut while keeping the value?
+                    </div>
+                    <div class="validation-message" id="o-03-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="o-04" class="question-label">
+                        <span class="question-number">9.</span>
+                        How will you measure if users are getting value from your solution?
+                    </label>
+                    <textarea 
+                        id="o-04" 
+                        name="o-04" 
+                        rows="3" 
+                        required 
+                        minlength="50" 
+                        maxlength="300"
+                        aria-describedby="o-04-guidance"
+                    ></textarea>
+                    <div id="o-04-guidance" class="guidance">
+                        Define specific, measurable metrics that indicate user success and project impact.
+                    </div>
+                    <div class="validation-message" id="o-04-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="o-05" class="question-label">
+                        <span class="question-number">10.</span>
+                        How will you decide what to build first, second, and third?
+                    </label>
+                    <textarea 
+                        id="o-05" 
+                        name="o-05" 
+                        rows="3" 
+                        required 
+                        minlength="50" 
+                        maxlength="300"
+                        aria-describedby="o-05-guidance"
+                    ></textarea>
+                    <div id="o-05-guidance" class="guidance">
+                        Establish clear criteria for prioritizing features and improvements based on impact and effort.
+                    </div>
+                    <div class="validation-message" id="o-05-error" role="alert"></div>
+                </div>
+            </section>
+
+            <!-- Phase 3: Refine -->
+            <section class="phase-section" id="phase-refine" aria-labelledby="refine-heading">
+                <h2 id="refine-heading">Phase 3: Refine</h2>
+                <p class="phase-description">Analyze risks and constraints</p>
+                
+                <div class="question-group">
+                    <label for="r-01" class="question-label">
+                        <span class="question-number">11.</span>
+                        What technical challenges or unknowns could derail this project?
+                    </label>
+                    <textarea 
+                        id="r-01" 
+                        name="r-01" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="400"
+                        aria-describedby="r-01-guidance"
+                    ></textarea>
+                    <div id="r-01-guidance" class="guidance">
+                        Identify technical risks early. What don't you know how to build yet? What could go wrong?
+                    </div>
+                    <div class="validation-message" id="r-01-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="r-02" class="question-label">
+                        <span class="question-number">12.</span>
+                        What are your realistic constraints for time, budget, and team?
+                    </label>
+                    <textarea 
+                        id="r-02" 
+                        name="r-02" 
+                        rows="3" 
+                        required 
+                        minlength="50" 
+                        maxlength="300"
+                        aria-describedby="r-02-guidance"
+                    ></textarea>
+                    <div id="r-02-guidance" class="guidance">
+                        Be honest about your actual resources. What are the hard limits you're working within?
+                    </div>
+                    <div class="validation-message" id="r-02-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="r-03" class="question-label">
+                        <span class="question-number">13.</span>
+                        What could prevent users from adopting or paying for this solution?
+                    </label>
+                    <textarea 
+                        id="r-03" 
+                        name="r-03" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="400"
+                        aria-describedby="r-03-guidance"
+                    ></textarea>
+                    <div id="r-03-guidance" class="guidance">
+                        Consider adoption barriers, competition, and market timing. What might make users say no?
+                    </div>
+                    <div class="validation-message" id="r-03-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="r-04" class="question-label">
+                        <span class="question-number">14.</span>
+                        How will you test your assumptions before building everything?
+                    </label>
+                    <textarea 
+                        id="r-04" 
+                        name="r-04" 
+                        rows="4" 
+                        required 
+                        minlength="50" 
+                        maxlength="400"
+                        aria-describedby="r-04-guidance"
+                    ></textarea>
+                    <div id="r-04-guidance" class="guidance">
+                        Plan specific experiments to validate your riskiest assumptions with real users.
+                    </div>
+                    <div class="validation-message" id="r-04-error" role="alert"></div>
+                </div>
+
+                <div class="question-group">
+                    <label for="r-05" class="question-label">
+                        <span class="question-number">15.</span>
+                        What evidence would convince you to significantly change direction?
+                    </label>
+                    <textarea 
+                        id="r-05" 
+                        name="r-05" 
+                        rows="3" 
+                        required 
+                        minlength="50" 
+                        maxlength="300"
+                        aria-describedby="r-05-guidance"
+                    ></textarea>
+                    <div id="r-05-guidance" class="guidance">
+                        Define clear criteria that would indicate your current approach isn't working.
+                    </div>
+                    <div class="validation-message" id="r-05-error" role="alert"></div>
+                </div>
+            </section>
+
+            <!-- Phase 4: Equip -->
+            <section class="phase-section" id="phase-equip" aria-labelledby="equip-heading">
+                <h2 id="equip-heading">Phase 4: Equip</h2>
+                <p class="phase-description">Generate implementation documentation</p>
+                
+                <div class="equip-actions">
+                    <div class="action-group">
+                        <h3>Choose Your Output Format</h3>
+                        <p>Select the documentation format that best fits your needs:</p>
+                        
+                        <div class="action-option">
+                            <input type="radio" id="action-markdown" name="output-action" value="markdown" checked>
+                            <label for="action-markdown">
+                                <strong>Project Documentation (Markdown)</strong>
+                                <span class="action-description">Comprehensive project documentation with all phases, answers, and next steps</span>
+                            </label>
+                        </div>
+                        
+                        <div class="action-option">
+                            <input type="radio" id="action-json" name="output-action" value="json">
+                            <label for="action-json">
+                                <strong>Structured Data Export (JSON)</strong>
+                                <span class="action-description">Complete session data including metadata, answers, and timestamps</span>
+                            </label>
+                        </div>
+                        
+                        <div class="action-option">
+                            <input type="radio" id="action-ai-prompt" name="output-action" value="ai_prompt">
+                            <label for="action-ai-prompt">
+                                <strong>AI Implementation Prompt</strong>
+                                <span class="action-description">Comprehensive prompt for AI-assisted development with project context</span>
+                            </label>
+                        </div>
+                        
+                        <div class="action-option">
+                            <input type="radio" id="action-all" name="output-action" value="all">
+                            <label for="action-all">
+                                <strong>Complete Documentation Package</strong>
+                                <span class="action-description">Generate all formats for comprehensive project handoff</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="generate-section">
+                        <button type="button" id="generate-output" class="generate-btn">
+                            Generate Documentation
+                        </button>
+                        <p class="generate-note">
+                            This will create your selected documentation format based on all your answers from the previous phases.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </form>
+
+        <!-- Navigation controls -->
+        <nav class="phase-navigation" aria-label="Phase Navigation">
+            <button type="button" id="prev-phase" disabled>Previous</button>
+            <button type="button" id="next-phase">Next</button>
+        </nav>
+
+        <!-- Output section -->
+        <section class="output-section" id="output-section" aria-labelledby="output-heading" hidden>
+            <h2 id="output-heading">Generated Documentation</h2>
+            <div class="output-controls">
+                <button type="button" id="generate-markdown">Generate Markdown</button>
+                <button type="button" id="generate-json">Generate JSON</button>
+                <button type="button" id="generate-ai-prompt">Generate AI Prompt</button>
+                <button type="button" id="generate-all">Generate All Formats</button>
+            </div>
+            <div class="output-content">
+                <textarea id="output-display" readonly rows="20"></textarea>
+                <button type="button" id="download-output">Download</button>
+                <button type="button" id="copy-output">Copy to Clipboard</button>
+            </div>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
+        <p>&copy; 2026 CORE Framework - Interactive Project Planning Tool</p>
+    </footer>
+
+    <script>
+        // CORE Framework v1 HTML Implementation
+        // Based on methodology schema from T-001
+        
+        class COREFramework {
+            constructor() {
+                this.currentPhase = 0;
+                this.phases = ['clarify', 'organize', 'refine', 'equip'];
+                this.sessionData = this.initializeSession();
+                this.questions = this.getQuestionSchema();
+                
+                this.init();
+            }
+            
+            initializeSession() {
+                return {
+                    session: {
+                        id: this.generateUUID(),
+                        name: '',
+                        description: '',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                        version: '1.0.0',
+                        implementation: 'v1-html',
+                        status: 'draft'
+                    },
+                    project: {
+                        title: '',
+                        summary: ''
+                    },
+                    answers: [],
+                    ai_conversations: [],
+                    exports: {}
+                };
+            }
+            
+            generateUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+            
+            getQuestionSchema() {
+                return {
+                    'c-01': { phase: 'clarify', minLength: 50, maxLength: 500 },
+                    'c-02': { phase: 'clarify', minLength: 50, maxLength: 400 },
+                    'c-03': { phase: 'clarify', minLength: 30, maxLength: 300 },
+                    'c-04': { phase: 'clarify', minLength: 100, maxLength: 600 },
+                    'c-05': { phase: 'clarify', minLength: 50, maxLength: 400 },
+                    'o-01': { phase: 'organize', minLength: 100, maxLength: 500 },
+                    'o-02': { phase: 'organize', minLength: 50, maxLength: 400 },
+                    'o-03': { phase: 'organize', minLength: 50, maxLength: 400 },
+                    'o-04': { phase: 'organize', minLength: 50, maxLength: 300 },
+                    'o-05': { phase: 'organize', minLength: 50, maxLength: 300 },
+                    'r-01': { phase: 'refine', minLength: 50, maxLength: 400 },
+                    'r-02': { phase: 'refine', minLength: 50, maxLength: 300 },
+                    'r-03': { phase: 'refine', minLength: 50, maxLength: 400 },
+                    'r-04': { phase: 'refine', minLength: 50, maxLength: 400 },
+                    'r-05': { phase: 'refine', minLength: 50, maxLength: 300 }
+                };
+            }
+            
+            init() {
+                this.bindEvents();
+                this.loadFromStorage();
+                this.updateUI();
+                this.setupAutoSave();
+            }
+            
+            bindEvents() {
+                // Navigation
+                document.getElementById('prev-phase').addEventListener('click', () => this.previousPhase());
+                document.getElementById('next-phase').addEventListener('click', () => this.nextPhase());
+                
+                // Session management
+                document.getElementById('save-session').addEventListener('click', () => this.saveSession());
+                document.getElementById('load-session').addEventListener('click', () => this.loadSession());
+                document.getElementById('session-name').addEventListener('input', (e) => {
+                    this.sessionData.session.name = e.target.value;
+                    this.saveToStorage();
+                });
+                
+                // Form validation
+                Object.keys(this.questions).forEach(questionId => {
+                    const element = document.getElementById(questionId);
+                    if (element) {
+                        element.addEventListener('input', () => this.validateQuestion(questionId));
+                        element.addEventListener('blur', () => this.validateQuestion(questionId));
+                    }
+                });
+                
+                // Output generation
+                document.getElementById('generate-output').addEventListener('click', () => this.generateOutput());
+                
+                // Output controls (legacy buttons for backward compatibility)
+                const outputButtons = [
+                    'generate-markdown',
+                    'generate-json', 
+                    'generate-ai-prompt',
+                    'generate-all'
+                ];
+                
+                outputButtons.forEach(buttonId => {
+                    const button = document.getElementById(buttonId);
+                    if (button) {
+                        button.addEventListener('click', () => {
+                            const format = buttonId.replace('generate-', '').replace('-', '_');
+                            this.generateSpecificOutput(format);
+                        });
+                    }
+                });
+                
+                // Download and copy
+                const downloadBtn = document.getElementById('download-output');
+                const copyBtn = document.getElementById('copy-output');
+                
+                if (downloadBtn) downloadBtn.addEventListener('click', () => this.downloadOutput());
+                if (copyBtn) copyBtn.addEventListener('click', () => this.copyOutput());
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+            }
+            
+            // Continue with more methods...
+            
+            validateQuestion(questionId) {
+                const element = document.getElementById(questionId);
+                const errorElement = document.getElementById(`${questionId}-error`);
+                const schema = this.questions[questionId];
+                
+                if (!element || !schema) return true;
+                
+                const value = element.value.trim();
+                const isValid = value.length >= schema.minLength && value.length <= schema.maxLength;
+                
+                if (isValid) {
+                    element.classList.remove('invalid');
+                    errorElement.classList.remove('show');
+                    errorElement.textContent = '';
+                } else {
+                    element.classList.add('invalid');
+                    errorElement.classList.add('show');
+                    if (value.length < schema.minLength) {
+                        errorElement.textContent = `Please provide at least ${schema.minLength} characters.`;
+                    } else {
+                        errorElement.textContent = `Please keep your response under ${schema.maxLength} characters.`;
+                    }
+                }
+                
+                return isValid;
+            }
+            
+            validateCurrentPhase() {
+                const currentPhaseId = this.phases[this.currentPhase];
+                const phaseQuestions = Object.keys(this.questions).filter(
+                    id => this.questions[id].phase === currentPhaseId
+                );
+                
+                return phaseQuestions.every(questionId => this.validateQuestion(questionId));
+            }
+            
+            nextPhase() {
+                if (this.currentPhase < this.phases.length - 1) {
+                    if (this.validateCurrentPhase()) {
+                        this.saveAnswers();
+                        this.currentPhase++;
+                        this.updateUI();
+                        this.saveToStorage();
+                    }
+                }
+            }
+            
+            previousPhase() {
+                if (this.currentPhase > 0) {
+                    this.saveAnswers();
+                    this.currentPhase--;
+                    this.updateUI();
+                    this.saveToStorage();
+                }
+            }
+            
+            updateUI() {
+                // Update progress steps
+                document.querySelectorAll('.step').forEach((step, index) => {
+                    step.classList.remove('active', 'completed');
+                    if (index === this.currentPhase) {
+                        step.classList.add('active');
+                    } else if (index < this.currentPhase) {
+                        step.classList.add('completed');
+                    }
+                });
+                
+                // Update phase sections
+                document.querySelectorAll('.phase-section').forEach((section, index) => {
+                    section.classList.toggle('active', index === this.currentPhase);
+                });
+                
+                // Update navigation buttons
+                document.getElementById('prev-phase').disabled = this.currentPhase === 0;
+                document.getElementById('next-phase').disabled = this.currentPhase === this.phases.length - 1;
+                
+                // Show/hide output section
+                const outputSection = document.getElementById('output-section');
+                if (this.currentPhase === this.phases.length - 1) {
+                    outputSection.hidden = false;
+                } else {
+                    outputSection.hidden = true;
+                }
+                
+                // Update session name input
+                document.getElementById('session-name').value = this.sessionData.session.name;
+            }
+            
+            saveAnswers() {
+                const currentPhaseId = this.phases[this.currentPhase];
+                const phaseQuestions = Object.keys(this.questions).filter(
+                    id => this.questions[id].phase === currentPhaseId
+                );
+                
+                phaseQuestions.forEach(questionId => {
+                    const element = document.getElementById(questionId);
+                    if (element) {
+                        const existingAnswer = this.sessionData.answers.find(a => a.question_id === questionId.toUpperCase());
+                        const answerData = {
+                            question_id: questionId.toUpperCase(),
+                            response: element.value.trim(),
+                            answered_at: new Date().toISOString(),
+                            confidence: 4 // Default confidence level
+                        };
+                        
+                        if (existingAnswer) {
+                            Object.assign(existingAnswer, answerData);
+                        } else {
+                            this.sessionData.answers.push(answerData);
+                        }
+                    }
+                });
+                
+                this.sessionData.session.updated_at = new Date().toISOString();
+            }
+            
+            loadAnswers() {
+                this.sessionData.answers.forEach(answer => {
+                    const element = document.getElementById(answer.question_id.toLowerCase());
+                    if (element) {
+                        element.value = answer.response;
+                    }
+                });
+            }
+            
+            saveToStorage() {
+                try {
+                    localStorage.setItem('core-framework-session', JSON.stringify(this.sessionData));
+                } catch (error) {
+                    console.error('Failed to save to localStorage:', error);
+                }
+            }
+            
+            loadFromStorage() {
+                try {
+                    const stored = localStorage.getItem('core-framework-session');
+                    if (stored) {
+                        this.sessionData = JSON.parse(stored);
+                        this.loadAnswers();
+                    }
+                } catch (error) {
+                    console.error('Failed to load from localStorage:', error);
+                }
+            }
+            
+            setupAutoSave() {
+                // Auto-save every 30 seconds
+                setInterval(() => {
+                    this.saveAnswers();
+                    this.saveToStorage();
+                }, 30000);
+                
+                // Save on page unload
+                window.addEventListener('beforeunload', () => {
+                    this.saveAnswers();
+                    this.saveToStorage();
+                });
+            }
+            
+            saveSession() {
+                this.saveAnswers();
+                this.saveToStorage();
+                
+                // Create downloadable session file
+                const sessionBlob = new Blob([JSON.stringify(this.sessionData, null, 2)], {
+                    type: 'application/json'
+                });
+                
+                const url = URL.createObjectURL(sessionBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `core-framework-session-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('Session saved successfully!');
+            }
+            
+            loadSession() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            try {
+                                const sessionData = JSON.parse(e.target.result);
+                                this.sessionData = sessionData;
+                                this.loadAnswers();
+                                this.updateUI();
+                                this.saveToStorage();
+                                alert('Session loaded successfully!');
+                            } catch (error) {
+                                alert('Failed to load session file. Please check the file format.');
+                            }
+                        };
+                        reader.readAsText(file);
+                    }
+                };
+                
+                input.click();
+            }
+            
+            // Continue with output generation methods...
+            
+            generateOutput() {
+                const selectedFormat = document.querySelector('input[name="output-action"]:checked').value;
+                this.generateSpecificOutput(selectedFormat);
+            }
+            
+            generateSpecificOutput(format) {
+                this.saveAnswers(); // Ensure all current answers are saved
+                
+                let output = '';
+                let filename = '';
+                let mimeType = 'text/plain';
+                
+                switch (format) {
+                    case 'markdown':
+                        output = this.generateMarkdown();
+                        filename = 'project-plan.md';
+                        mimeType = 'text/markdown';
+                        break;
+                    case 'json':
+                        output = this.generateJSON();
+                        filename = 'project-data.json';
+                        mimeType = 'application/json';
+                        break;
+                    case 'ai_prompt':
+                        output = this.generateAIPrompt();
+                        filename = 'ai-implementation-prompt.txt';
+                        mimeType = 'text/plain';
+                        break;
+                    case 'all':
+                        this.generateAllFormats();
+                        return;
+                }
+                
+                this.displayOutput(output, filename, mimeType);
+            }
+            
+            generateMarkdown() {
+                const timestamp = new Date().toLocaleString();
+                const sessionName = this.sessionData.session.name || 'Untitled Project';
+                
+                let markdown = `# ${sessionName} - CORE Framework Analysis\n\n`;
+                markdown += `**Generated**: ${timestamp}\n`;
+                markdown += `**Session**: ${this.sessionData.session.id}\n`;
+                markdown += `**Framework Version**: ${this.sessionData.session.version}\n\n`;
+                
+                // Executive Summary
+                const problemAnswer = this.getAnswer('C-01');
+                const successAnswer = this.getAnswer('C-02');
+                
+                if (problemAnswer || successAnswer) {
+                    markdown += `## Executive Summary\n\n`;
+                    if (problemAnswer) {
+                        markdown += `**Problem**: ${problemAnswer}\n\n`;
+                    }
+                    if (successAnswer) {
+                        markdown += `**Success Vision**: ${successAnswer}\n\n`;
+                    }
+                }
+                
+                // Phase sections
+                const phaseData = {
+                    'Clarify': ['C-01', 'C-02', 'C-03', 'C-04', 'C-05'],
+                    'Organize': ['O-01', 'O-02', 'O-03', 'O-04', 'O-05'],
+                    'Refine': ['R-01', 'R-02', 'R-03', 'R-04', 'R-05']
+                };
+                
+                const questionTitles = {
+                    'C-01': 'Problem & Target Users',
+                    'C-02': 'Success Vision (6 months)',
+                    'C-03': 'Unique Value Proposition',
+                    'C-04': 'Ideal User Experience',
+                    'C-05': 'Scope Boundaries',
+                    'O-01': 'Essential Features (3-5)',
+                    'O-02': 'User Types & Needs',
+                    'O-03': 'Minimum Viable Product',
+                    'O-04': 'Success Metrics',
+                    'O-05': 'Prioritization Framework',
+                    'R-01': 'Technical Risks',
+                    'R-02': 'Resource Constraints',
+                    'R-03': 'Market/Adoption Risks',
+                    'R-04': 'Validation Plan',
+                    'R-05': 'Pivot Triggers'
+                };
+                
+                Object.entries(phaseData).forEach(([phaseName, questionIds]) => {
+                    markdown += `## Phase ${Object.keys(phaseData).indexOf(phaseName) + 1}: ${phaseName}\n\n`;
+                    
+                    questionIds.forEach(questionId => {
+                        const answer = this.getAnswer(questionId);
+                        if (answer) {
+                            markdown += `### ${questionTitles[questionId]}\n\n`;
+                            markdown += `${answer}\n\n`;
+                        }
+                    });
+                });
+                
+                // Next Steps
+                markdown += `## Next Steps\n\n`;
+                markdown += `Based on your CORE Framework analysis, consider these implementation priorities:\n\n`;
+                
+                const mvpAnswer = this.getAnswer('O-03');
+                const featuresAnswer = this.getAnswer('O-01');
+                const risksAnswer = this.getAnswer('R-01');
+                
+                if (mvpAnswer) {
+                    markdown += `1. **Start with MVP**: ${mvpAnswer.split('.')[0]}...\n`;
+                }
+                if (featuresAnswer) {
+                    markdown += `2. **Focus on Core Features**: Prioritize the essential features you identified\n`;
+                }
+                if (risksAnswer) {
+                    markdown += `3. **Address Technical Risks**: Plan for the technical challenges you identified\n`;
+                }
+                
+                markdown += `4. **Validate Assumptions**: Test your riskiest assumptions before full development\n`;
+                markdown += `5. **Set Up Metrics**: Implement tracking for your success metrics\n\n`;
+                
+                markdown += `---\n\n`;
+                markdown += `*Generated by CORE Framework v${this.sessionData.session.version} - Interactive Project Planning Tool*\n`;
+                
+                return markdown;
+            }
+            
+            generateJSON() {
+                return JSON.stringify(this.sessionData, null, 2);
+            }
+            
+            generateAIPrompt() {
+                const sessionName = this.sessionData.session.name || 'Untitled Project';
+                
+                let prompt = `Based on the following CORE Framework analysis, provide detailed implementation guidance for this project:\n\n`;
+                
+                prompt += `## Project Context\n`;
+                prompt += `**Project**: ${sessionName}\n`;
+                prompt += `**Analysis Date**: ${new Date().toLocaleDateString()}\n\n`;
+                
+                // Key insights from each phase
+                const problemAnswer = this.getAnswer('C-01');
+                const valueAnswer = this.getAnswer('C-03');
+                const featuresAnswer = this.getAnswer('O-01');
+                const mvpAnswer = this.getAnswer('O-03');
+                const risksAnswer = this.getAnswer('R-01');
+                
+                if (problemAnswer) {
+                    prompt += `**Core Problem**: ${problemAnswer}\n\n`;
+                }
+                if (valueAnswer) {
+                    prompt += `**Unique Value**: ${valueAnswer}\n\n`;
+                }
+                if (featuresAnswer) {
+                    prompt += `**Essential Features**: ${featuresAnswer}\n\n`;
+                }
+                if (mvpAnswer) {
+                    prompt += `**MVP Definition**: ${mvpAnswer}\n\n`;
+                }
+                if (risksAnswer) {
+                    prompt += `**Technical Risks**: ${risksAnswer}\n\n`;
+                }
+                
+                prompt += `## Requirements Analysis\n`;
+                prompt += `Please analyze the complete project requirements based on all 15 questions answered in the CORE Framework:\n\n`;
+                
+                // Include all answers organized by phase
+                const phaseNames = ['Clarify', 'Organize', 'Refine'];
+                const phaseQuestions = [
+                    ['C-01', 'C-02', 'C-03', 'C-04', 'C-05'],
+                    ['O-01', 'O-02', 'O-03', 'O-04', 'O-05'],
+                    ['R-01', 'R-02', 'R-03', 'R-04', 'R-05']
+                ];
+                
+                phaseNames.forEach((phaseName, phaseIndex) => {
+                    prompt += `### ${phaseName} Phase\n`;
+                    phaseQuestions[phaseIndex].forEach((questionId, qIndex) => {
+                        const answer = this.getAnswer(questionId);
+                        if (answer) {
+                            prompt += `${qIndex + 1}. ${answer}\n`;
+                        }
+                    });
+                    prompt += `\n`;
+                });
+                
+                prompt += `## Please provide:\n\n`;
+                prompt += `### 1. Technical Architecture\n`;
+                prompt += `- Recommended technology stack and frameworks\n`;
+                prompt += `- System architecture and component breakdown\n`;
+                prompt += `- Database design and data flow\n`;
+                prompt += `- Security considerations and implementation\n\n`;
+                
+                prompt += `### 2. Implementation Plan\n`;
+                prompt += `- Detailed development roadmap with phases\n`;
+                prompt += `- Sprint planning and milestone definitions\n`;
+                prompt += `- Resource allocation and timeline estimates\n`;
+                prompt += `- Risk mitigation strategies\n\n`;
+                
+                prompt += `### 3. Development Guidelines\n`;
+                prompt += `- Code structure and organization patterns\n`;
+                prompt += `- Testing strategy and quality assurance\n`;
+                prompt += `- Deployment and DevOps recommendations\n`;
+                prompt += `- Performance optimization approaches\n\n`;
+                
+                prompt += `### 4. Success Metrics & Validation\n`;
+                prompt += `- Key performance indicators (KPIs) to track\n`;
+                prompt += `- User testing and feedback collection methods\n`;
+                prompt += `- Analytics implementation recommendations\n`;
+                prompt += `- Iteration and improvement processes\n\n`;
+                
+                prompt += `Please provide specific, actionable recommendations that directly address the project requirements and constraints identified in the CORE Framework analysis.`;
+                
+                return prompt;
+            }
+            
+            generateAllFormats() {
+                const formats = [
+                    { type: 'markdown', filename: 'project-plan.md', content: this.generateMarkdown() },
+                    { type: 'json', filename: 'project-data.json', content: this.generateJSON() },
+                    { type: 'ai_prompt', filename: 'ai-implementation-prompt.txt', content: this.generateAIPrompt() }
+                ];
+                
+                // Create a zip-like structure (simplified for browser)
+                let combinedOutput = `CORE Framework - Complete Documentation Package\n`;
+                combinedOutput += `Generated: ${new Date().toLocaleString()}\n`;
+                combinedOutput += `Session: ${this.sessionData.session.name || 'Untitled Project'}\n\n`;
+                combinedOutput += `${'='.repeat(60)}\n\n`;
+                
+                formats.forEach(format => {
+                    combinedOutput += `FILE: ${format.filename}\n`;
+                    combinedOutput += `${'='.repeat(format.filename.length + 6)}\n\n`;
+                    combinedOutput += format.content;
+                    combinedOutput += `\n\n${'='.repeat(60)}\n\n`;
+                });
+                
+                this.displayOutput(combinedOutput, 'complete-documentation-package.txt', 'text/plain');
+            }
+            
+            getAnswer(questionId) {
+                const answer = this.sessionData.answers.find(a => a.question_id === questionId);
+                return answer ? answer.response : '';
+            }
+            
+            displayOutput(content, filename, mimeType) {
+                const outputDisplay = document.getElementById('output-display');
+                if (outputDisplay) {
+                    outputDisplay.value = content;
+                    outputDisplay.dataset.filename = filename;
+                    outputDisplay.dataset.mimetype = mimeType;
+                }
+                
+                // Show output section if not already visible
+                const outputSection = document.getElementById('output-section');
+                if (outputSection) {
+                    outputSection.hidden = false;
+                }
+            }
+            
+            downloadOutput() {
+                const outputDisplay = document.getElementById('output-display');
+                if (!outputDisplay || !outputDisplay.value) return;
+                
+                const content = outputDisplay.value;
+                const filename = outputDisplay.dataset.filename || 'core-framework-output.txt';
+                const mimeType = outputDisplay.dataset.mimetype || 'text/plain';
+                
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+            
+            copyOutput() {
+                const outputDisplay = document.getElementById('output-display');
+                if (!outputDisplay || !outputDisplay.value) return;
+                
+                outputDisplay.select();
+                document.execCommand('copy');
+                
+                // Show feedback
+                const copyBtn = document.getElementById('copy-output');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            }
+            
+            handleKeyboard(e) {
+                // Keyboard shortcuts
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case 's':
+                            e.preventDefault();
+                            this.saveSession();
+                            break;
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            this.previousPhase();
+                            break;
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            this.nextPhase();
+                            break;
+                    }
+                }
+            }
+        }
+        
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.coreFramework = new COREFramework();
+        });
+    </script>
+</body>
+</html>
