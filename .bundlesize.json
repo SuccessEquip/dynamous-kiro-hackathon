@@ -1,0 +1,21 @@
+[
+  {
+    "path": "./dist/v1/**/*.html",
+    "maxSize": "100kb",
+    "compression": "gzip"
+  },
+  {
+    "path": "./dist/v3/**/*.js",
+    "maxSize": "500kb",
+    "compression": "gzip"
+  },
+  {
+    "path": "./dist/v3/**/*.css",
+    "maxSize": "50kb",
+    "compression": "gzip"
+  },
+  {
+    "path": "./v2-python/dist/**/*.whl",
+    "maxSize": "10mb"
+  }
+]
