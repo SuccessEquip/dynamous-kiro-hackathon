@@ -46,7 +46,7 @@ class QuestionScreen(Screen):
         yield Header()
         
         with ScrollableContainer():
-            yield Static(f"[bold cyan]Phase {self.phase_index + 1}/4: {phases[self.phase_index]}[/bold cyan]")
+            yield Static(f"[bold cyan]Phase {self.phase_index + 1}/3: {phases[self.phase_index]}[/bold cyan]")
             yield Static(f"Question {self.question_index + 1}/{self.total_questions}")
             yield Static("")
             yield Static(f"[bold]{self.question.text}[/bold]")
@@ -59,8 +59,8 @@ class QuestionScreen(Screen):
                 id="answer-input"
             )
             yield Static("")
-            yield Button("Save & Next →", id="next-btn", variant="primary")
-            yield Button("← Back", id="back-btn", variant="default")
+            yield Button("Save & Next →", id="next-btn")
+            yield Button("← Back", id="back-btn")
         
         yield Footer()
     
@@ -136,13 +136,13 @@ class PhaseMenuScreen(Screen):
                 answered = sum(1 for q in questions if any(a.question_id == q.id for a in self.session_data.answers))
                 total = len(questions)
                 
-                status = f"[green]✓[/green]" if answered == total else f"[yellow]{answered}/{total}[/yellow]"
-                yield Button(f"{status} Phase {i+1}: {name} - {desc}", id=f"phase-{i}", variant="primary" if answered < total else "default")
+                status = "[green]✓[/green]" if answered == total else f"[yellow]{answered}/{total}[/yellow]"
+                yield Button(f"{status} Phase {i+1}: {name} - {desc}", id=f"phase-{i}")
             
             yield Static("")
-            yield Button("Save Session", id="save-btn", variant="success")
-            yield Button("Generate Output", id="output-btn", variant="primary")
-            yield Button("Exit", id="exit-btn", variant="default")
+            yield Button("Save Session", id="save-btn")
+            yield Button("Generate Output", id="output-btn")
+            yield Button("Exit", id="exit-btn")
         
         yield Footer()
     
@@ -208,29 +208,20 @@ class COREFrameworkApp(App):
     """Main CORE Framework TUI Application"""
     
     CSS = """
-    Screen {
-        align: center top;
-    }
-    
     ScrollableContainer {
-        width: 100%;
         height: 100%;
-        padding: 1 2;
     }
     
     Static {
         width: 100%;
-        margin-bottom: 1;
     }
     
     Input {
         width: 100%;
-        margin-bottom: 1;
     }
     
     Button {
         width: 100%;
-        margin-bottom: 1;
     }
     """
     
