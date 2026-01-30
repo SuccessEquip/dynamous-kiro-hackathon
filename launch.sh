@@ -74,24 +74,19 @@ launch_v2() {
     if [ ! -d "venv" ] || [ ! -f "venv/bin/python" ]; then
         echo -e "${YELLOW}Creating virtual environment...${NC}"
         $PYTHON_CMD -m venv venv 2>&1 | tee /tmp/venv_error.txt
-        if [ $? -ne 0 ]; then
-            if grep -q "python3-venv" /tmp/venv_error.txt; then
-                echo -e "${YELLOW}Installing python3-venv package...${NC}"
-                sudo apt install -y python3-venv
-                if [ $? -ne 0 ]; then
-                    echo -e "${RED}Failed to install python3-venv.${NC}"
-                    read -p "Press Enter to continue..."
-                    return 1
-                fi
-                echo -e "${YELLOW}Recreating virtual environment...${NC}"
-                rm -rf venv
-                $PYTHON_CMD -m venv venv
-                if [ $? -ne 0 ]; then
-                    echo -e "${RED}Failed to create virtual environment.${NC}"
-                    read -p "Press Enter to continue..."
-                    return 1
-                fi
-            else
+        
+        if [ $? -ne 0 ] || grep -q "python3-venv" /tmp/venv_error.txt; then
+            echo -e "${YELLOW}Installing python3-venv package...${NC}"
+            sudo apt install -y python3-venv
+            if [ $? -ne 0 ]; then
+                echo -e "${RED}Failed to install python3-venv.${NC}"
+                read -p "Press Enter to continue..."
+                return 1
+            fi
+            echo -e "${YELLOW}Recreating virtual environment...${NC}"
+            rm -rf venv
+            $PYTHON_CMD -m venv venv
+            if [ $? -ne 0 ]; then
                 echo -e "${RED}Failed to create virtual environment.${NC}"
                 read -p "Press Enter to continue..."
                 return 1
@@ -102,9 +97,16 @@ launch_v2() {
     # Use venv's python directly
     VENV_PYTHON="venv/bin/python"
     
-    # Verify venv has pip
+    # Verify venv has pip, if not reinstall python3-venv
     if ! $VENV_PYTHON -m pip --version &>/dev/null; then
-        echo -e "${YELLOW}Virtual environment incomplete, recreating...${NC}"
+        echo -e "${YELLOW}Virtual environment incomplete, installing python3-venv...${NC}"
+        sudo apt install -y python3-venv
+        if [ $? -ne 0 ]; then
+            echo -e "${RED}Failed to install python3-venv.${NC}"
+            read -p "Press Enter to continue..."
+            return 1
+        fi
+        echo -e "${YELLOW}Recreating virtual environment...${NC}"
         rm -rf venv
         $PYTHON_CMD -m venv venv
         if [ $? -ne 0 ]; then
