@@ -48,50 +48,56 @@ This template provides everything you need to get started:
 
 ## Quick Start
 
+**New here?** Check out [QUICKSTART.md](QUICKSTART.md) for a detailed getting-started guide!
+
 ### Prerequisites
-- **Kiro CLI**: Install from [kiro.dev](https://kiro.dev)
+- **Kiro CLI**: Install from [kiro.dev](https://kiro.dev) (for contributors only)
 - **Node.js 18+**: For v3 React implementation
 - **Python 3.8+**: For v2 Python TUI
 - **Modern Browser**: For v1 HTML version
 
 ### 1. Clone This Repository
 ```bash
-git clone https://github.com/yourusername/CORE-framework
-cd CORE-framework
+git clone https://github.com/SuccessEquip/dynamous-kiro-hackathon.git
+cd dynamous-kiro-hackathon
 ```
 
 ### 2. Choose Your Implementation
 
-#### v1: HTML/CSS/JS (Simplest)
+#### v1: HTML/CSS/JS (Simplest - No Installation)
 ```bash
 cd v1-html
-# Open index.html in your browser
-python -m http.server 8000  # Or any static server
+open index.html  # or double-click in file explorer
 ```
 
-#### v2: Python TUI
+#### v2: Python TUI (Terminal Interface)
 ```bash
 cd v2-python
 pip install -r requirements.txt
 python -m core_framework.main
 ```
 
-#### v3: React + Supabase (Most Features)
+#### v3: React + Supabase (Full-Featured)
 ```bash
 cd v3-react/frontend
 npm install
 npm run dev
+# Visit http://localhost:5173
 ```
 
-See version-specific READMEs for detailed setup instructions.
+See [QUICKSTART.md](QUICKSTART.md) for detailed instructions and [version-specific READMEs](v1-html/README.md) for advanced configuration.
 
 ### 3. Start Planning
 1. Create a new session with your project title
-2. Answer questions through the 4 phases
+2. Answer questions through the 4 phases (Clarify → Organize → Refine → Equip)
 3. Generate comprehensive documentation
 4. Export in your preferred format (Markdown, JSON, AI prompt)
 
-## Development Workflow (For Contributors)
+---
+
+## For Contributors
+
+This project was built for the Kiro Hackathon. If you're contributing to development:
 
 ### Initial Setup (One-Time)
 1. **Complete setup**: Run `@quickstart` to configure your project
