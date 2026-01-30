@@ -153,29 +153,32 @@ Completed: 2026-01-29 by automated workflow system
 ```
 
 ```
-T-006: Add AI Integration to v2 (OpenRouter + Ollama)
+T-006: Add AI Integration to v2 (OpenRouter + Ollama) ✅ COMPLETE
 Maps to: R-F-007, R-F-008, R-N-SEC-003, R-N-REL-002
 Component(s): C-05
 Description: Integrate both OpenRouter API and Ollama for AI-assisted planning with phase-specific chat guidance
 Files/Paths: v2-python/core_framework/ai_handler.py, v2-python/core_framework/config.py
 Definition of Done:
-  - Async API calls to OpenRouter with user-selectable models
-  - Ollama integration for local LLM support
-  - Phase-specific AI guidance (probe for better answers, refine scope, surface extra questions)
-  - Rate limiting, retry logic, and graceful degradation
-  - Environment variable configuration for API keys
-  - AI conversation history storage in session data
+  - ✅ Async API calls to OpenRouter with user-selectable models
+  - ✅ Ollama integration for local LLM support
+  - ✅ Phase-specific AI guidance (probe for better answers, refine scope, surface extra questions)
+  - ✅ Rate limiting, retry logic, and graceful degradation
+  - ✅ Environment variable configuration for API keys
+  - ✅ AI conversation history storage in session data
 Evidence to Produce:
-  - Tests: API integration tests, error handling tests, offline mode tests, Ollama integration tests
-  - Artifacts: API usage examples, configuration documentation, AI guidance examples
+  - ✅ Tests: API integration tests, error handling tests, offline mode tests, Ollama integration tests (20+ test cases)
+  - ✅ Artifacts: API usage examples, configuration documentation, AI guidance examples
 Risk Level: High (dual external API dependencies)
 Rollback Plan: Disable AI features, provide manual guidance prompts
 Implementation Notes:
-  - Use aiohttp for async HTTP requests
-  - Implement exponential backoff for retries
-  - Cache responses to reduce API calls
-  - Support both cloud (OpenRouter) and local (Ollama) models
-  - Phase-specific prompt templates for AI guidance
+  - ✅ Use aiohttp for async HTTP requests
+  - ✅ Implement exponential backoff for retries
+  - ✅ Cache responses to reduce API calls
+  - ✅ Support both cloud (OpenRouter) and local (Ollama) models
+  - ✅ Phase-specific prompt templates for AI guidance
+  - ✅ Automatic provider detection and fallback support
+  - ✅ TUI integration with AI assistance buttons and status indicators
+Completed: 2026-01-29 by automated workflow system
 ```
 
 ### React Implementation Tasks

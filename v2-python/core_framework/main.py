@@ -19,6 +19,8 @@ from .models import (
     ImplementationType, SessionStatus, QUESTIONS_BY_PHASE, QUESTIONS_BY_ID
 )
 from .output_generator import OutputGenerator
+from .ai_handler import AIHandler
+from .config import load_config
 
 
 class ProgressWidget(Static):
@@ -55,10 +57,11 @@ class ProgressWidget(Static):
 class QuestionWidget(Container):
     """Widget for displaying and answering a single question"""
     
-    def __init__(self, question: Question, answer: str = ""):
+    def __init__(self, question: Question, answer: str = "", ai_handler: Optional[AIHandler] = None):
         super().__init__()
         self.question = question
         self.answer_text = answer
+        self.ai_handler = ai_handler
     
     def compose(self) -> ComposeResult:
         with Vertical():
@@ -69,6 +72,10 @@ class QuestionWidget(Container):
                 id=f"answer-{self.question.id}",
                 classes="answer-input"
             )
+            if self.ai_handler:
+                with Horizontal(classes="ai-controls"):
+                    yield Button("💡 AI Guidance", id=f"ai-{self.question.id}", variant="default", classes="ai-button")
+                    yield Static("", id=f"ai-status-{self.question.id}", classes="ai-status")
     
     def get_answer(self) -> str:
         textarea = self.query_one(f"#answer-{self.question.id}", TextArea)
@@ -81,6 +88,18 @@ class QuestionWidget(Container):
         if len(answer) > self.question.max_length:
             return False, f"Please keep your response under {self.question.max_length} characters."
         return True, ""
+    
+    async def get_ai_guidance(self, phase: str) -> tuple[bool, str]:
+        """Get AI guidance for this question"""
+        if not self.ai_handler:
+            return False, "AI assistance not available"
+        
+        current_answer = self.get_answer()
+        success, response, conversation = await self.ai_handler.get_ai_guidance(
+            phase, self.question.text, current_answer
+        )
+        
+        return success, response
 
 
 class PhaseScreen(Screen):
@@ -93,12 +112,13 @@ class PhaseScreen(Screen):
         Binding("escape", "app.pop_screen", "Back"),
     ]
     
-    def __init__(self, phase: PhaseType, session_data: SessionData):
+    def __init__(self, phase: PhaseType, session_data: SessionData, ai_handler: Optional[AIHandler] = None):
         super().__init__()
         self.phase = phase
         self.session_data = session_data
         self.questions = QUESTIONS_BY_PHASE[phase]
         self.question_widgets = []
+        self.ai_handler = ai_handler
     
     def compose(self) -> ComposeResult:
         phase_names = {
@@ -305,6 +325,11 @@ class COREFrameworkApp(App):
         margin-bottom: 1;
     }
     
+    .ai-status-header {
+        text-align: center;
+        margin-bottom: 1;
+    }
+    
     .question-text {
         margin-bottom: 1;
     }
@@ -315,7 +340,20 @@ class COREFrameworkApp(App):
     
     .answer-input {
         height: 6;
-        margin-bottom: 2;
+        margin-bottom: 1;
+    }
+    
+    .ai-controls {
+        height: 3;
+        margin-bottom: 1;
+    }
+    
+    .ai-button {
+        width: 20;
+    }
+    
+    .ai-status {
+        margin-left: 1;
     }
     
     .navigation {
@@ -340,6 +378,8 @@ class COREFrameworkApp(App):
         self.session_data = self.create_new_session()
         self.current_phase = 0
         self.phases = [PhaseType.CLARIFY, PhaseType.ORGANIZE, PhaseType.REFINE, PhaseType.EQUIP]
+        self.ai_config = load_config()
+        self.ai_handler = None
     
     def create_new_session(self) -> SessionData:
         """Create a new session with default data"""
@@ -373,11 +413,31 @@ class COREFrameworkApp(App):
     
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "start-btn":
-            self.start_phase(0)
+            # Initialize AI handler when starting
+            self.run_worker(self._initialize_ai_and_start())
         elif event.button.id == "load-btn":
             self.action_load_session()
         elif event.button.id == "quit-btn":
             self.exit()
+    
+    async def _initialize_ai_and_start(self):
+        """Initialize AI handler and start first phase"""
+        try:
+            self.ai_handler = AIHandler(self.ai_config)
+            await self.ai_handler.__aenter__()
+            
+            # Show AI status
+            status = self.ai_handler.get_provider_status()
+            if status['primary_provider'] != 'disabled':
+                self.notify(f"AI assistance enabled: {status['primary_provider'].title()}", 
+                           severity="information")
+            else:
+                self.notify("AI assistance disabled. Set OPENROUTER_API_KEY or run Ollama for AI help.", 
+                           severity="warning")
+        except Exception as e:
+            self.notify(f"AI initialization failed: {str(e)}", severity="warning")
+        
+        self.start_phase(0)
     
     def start_phase(self, phase_index: int):
         """Start a specific phase"""
@@ -385,7 +445,7 @@ class COREFrameworkApp(App):
         
         if phase_index < 3:  # Clarify, Organize, Refine
             phase_type = self.phases[phase_index]
-            screen = PhaseScreen(phase_type, self.session_data)
+            screen = PhaseScreen(phase_type, self.session_data, self.ai_handler)
         else:  # Equip
             screen = EquipScreen(self.session_data)
         
