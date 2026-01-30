@@ -119,7 +119,6 @@ class PhaseMenuScreen(Screen):
             (PhaseType.CLARIFY, "Clarify", "Define your project vision and goals"),
             (PhaseType.ORGANIZE, "Organize", "Structure features and requirements"),
             (PhaseType.REFINE, "Refine", "Analyze risks and constraints"),
-            (PhaseType.EQUIP, "Equip", "Generate documentation")
         ]
     
     def compose(self) -> ComposeResult:
