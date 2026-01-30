@@ -104,17 +104,35 @@ class QuestionScreen(Screen):
         self.dismiss(False)
 
 
-class PhaseMenuScreen(Screen):
-    """Menu for selecting which phase to work on"""
+class COREFrameworkApp(App):
+    """Main CORE Framework TUI Application"""
+    
+    CSS = """
+    ScrollableContainer {
+        height: 100%;
+    }
+    
+    Static {
+        width: 100%;
+    }
+    
+    Input {
+        width: 100%;
+    }
+    
+    Button {
+        width: 100%;
+    }
+    """
     
     BINDINGS = [
-        Binding("escape", "back", "Back"),
+        Binding("ctrl+q", "quit", "Quit"),
         Binding("ctrl+s", "save", "Save"),
     ]
     
-    def __init__(self, session_data: SessionData):
+    def __init__(self):
         super().__init__()
-        self.session_data = session_data
+        self.session_data = self.create_new_session()
         self.phases = [
             (PhaseType.CLARIFY, "Clarify", "Define your project vision and goals"),
             (PhaseType.ORGANIZE, "Organize", "Structure features and requirements"),
@@ -122,6 +140,7 @@ class PhaseMenuScreen(Screen):
         ]
     
     def compose(self) -> ComposeResult:
+        """Main menu"""
         yield Header()
         
         with ScrollableContainer():
@@ -155,13 +174,11 @@ class PhaseMenuScreen(Screen):
         elif event.button.id == "output-btn":
             self.generate_output()
         elif event.button.id == "exit-btn":
-            self.app.exit()
+            self.exit()
     
     def start_phase(self, phase_index: int):
         phase_type = self.phases[phase_index][0]
         questions = QUESTIONS_BY_PHASE[phase_type]
-        
-        # Start with first question
         self.show_question(phase_index, 0, questions)
     
     def show_question(self, phase_index: int, question_index: int, questions: list):
@@ -176,7 +193,7 @@ class PhaseMenuScreen(Screen):
             if should_continue:
                 self.show_question(phase_index, question_index + 1, questions)
         
-        self.app.push_screen(screen, on_question_complete)
+        self.push_screen(screen, on_question_complete)
     
     def action_save(self):
         try:
@@ -200,39 +217,6 @@ class PhaseMenuScreen(Screen):
         except Exception as e:
             self.notify(f"Error generating output: {str(e)}", severity="error")
     
-    def action_back(self):
-        self.app.pop_screen()
-
-
-class COREFrameworkApp(App):
-    """Main CORE Framework TUI Application"""
-    
-    CSS = """
-    ScrollableContainer {
-        height: 100%;
-    }
-    
-    Static {
-        width: 100%;
-    }
-    
-    Input {
-        width: 100%;
-    }
-    
-    Button {
-        width: 100%;
-    }
-    """
-    
-    BINDINGS = [
-        Binding("ctrl+q", "quit", "Quit"),
-    ]
-    
-    def __init__(self):
-        super().__init__()
-        self.session_data = self.create_new_session()
-    
     def create_new_session(self) -> SessionData:
         session_id = str(uuid.uuid4())
         return SessionData(
@@ -247,9 +231,6 @@ class COREFrameworkApp(App):
             )
         )
     
-    def on_mount(self):
-        self.push_screen(PhaseMenuScreen(self.session_data))
-
 
 def main():
     app = COREFrameworkApp()
