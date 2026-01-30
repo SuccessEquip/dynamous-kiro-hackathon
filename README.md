@@ -70,6 +70,7 @@ launch.bat
 
 The launcher will:
 - Check for required dependencies (Python, Node.js)
+- Create a virtual environment for Python (v2)
 - Install missing packages automatically
 - Open the appropriate interface for each version
 

@@ -23,6 +23,7 @@ launch.bat
 The launcher will:
 - Show a menu to choose your version
 - Check for required dependencies
+- Create a virtual environment for Python (v2)
 - Install missing packages automatically
 - Launch the selected version
 
