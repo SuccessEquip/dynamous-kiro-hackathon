@@ -2,6 +2,23 @@
 
 A modern React-based implementation of the CORE Framework project planning methodology with Tailwind CSS and shadcn/ui components.
 
+## Quick Start
+
+### Using the Launcher (Easiest)
+
+From the project root:
+```bash
+# Windows
+launch.bat  # or launch.ps1
+
+# macOS/Linux
+./launch.sh
+```
+
+Select option 3 for React + Supabase. The launcher will automatically check and install dependencies.
+
+### Manual Setup
+
 ## Features
 
 - **4-Phase Methodology**: Clarify → Organize → Refine → Equip

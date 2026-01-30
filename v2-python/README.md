@@ -2,6 +2,23 @@
 
 Interactive Project Planning Tool with 4-phase methodology using Python and Textual framework.
 
+## Quick Start
+
+### Using the Launcher (Easiest)
+
+From the project root:
+```bash
+# Windows
+launch.bat  # or launch.ps1
+
+# macOS/Linux
+./launch.sh
+```
+
+Select option 2 for Python TUI. The launcher will automatically check and install dependencies.
+
+### Manual Setup
+
 ## Features
 
 - **4-Phase Methodology**: Clarify → Organize → Refine → Equip
