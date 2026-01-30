@@ -2,6 +2,38 @@
 
 Get started with CORE Framework in 5 minutes! Choose your preferred implementation and start planning your project.
 
+## Easiest Way: Use the Launcher
+
+The fastest way to get started is using the cross-platform launcher:
+
+**Windows:**
+```cmd
+# Command Prompt
+launch.bat
+
+# PowerShell
+.\launch.ps1
+```
+
+**macOS/Linux:**
+```bash
+./launch.sh
+```
+
+The launcher will:
+- Show a menu to choose your version
+- Check for required dependencies
+- Install missing packages automatically
+- Launch the selected version
+
+**That's it!** Skip to [Using CORE Framework](#using-core-framework) below.
+
+---
+
+## Manual Setup (Alternative)
+
+If you prefer manual setup or want more control:
+
 ## What is CORE Framework?
 
 CORE Framework guides you through a structured 4-phase methodology to transform vague ideas into actionable project plans:

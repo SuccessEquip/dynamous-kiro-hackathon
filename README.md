@@ -50,6 +50,31 @@ This template provides everything you need to get started:
 
 **New here?** Check out [QUICKSTART.md](QUICKSTART.md) for a detailed getting-started guide!
 
+### Easy Launch (Recommended)
+
+Use the cross-platform launcher to automatically check dependencies and start any version:
+
+**Windows:**
+```cmd
+# Command Prompt
+launch.bat
+
+# PowerShell
+.\launch.ps1
+```
+
+**macOS/Linux:**
+```bash
+./launch.sh
+```
+
+The launcher will:
+- Check for required dependencies (Python, Node.js)
+- Install missing packages automatically
+- Open the appropriate interface for each version
+
+### Manual Setup
+
 ### Prerequisites
 - **Kiro CLI**: Install from [kiro.dev](https://kiro.dev) (for contributors only)
 - **Node.js 18+**: For v3 React implementation
