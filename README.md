@@ -1,8 +1,11 @@
-# Dynamous Kiro Hackathon Quickstart Template
+# CORE Framework - Interactive Project Planning Tools
 
-🚀 **Your starting point for the Dynamous and Kiro Hackathon** - A comprehensive template with pre-configured Kiro CLI setup, development workflows, and submission guidelines.
+🚀 **Transform vague ideas into actionable project plans** through a structured 4-phase, 15-question methodology with multiple implementation options.
 
-> **📖 New to Kiro?** Check out [kiro-guide.md](kiro-guide.md) to quickly get accustomed to how Kiro works and understand its unique features for the hackathon.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Built with Kiro CLI](https://img.shields.io/badge/Built%20with-Kiro%20CLI-blue)](https://kiro.dev)
+
+> **📖 New to Kiro?** Check out [kiro-guide.md](kiro-guide.md) to understand how this project leverages Kiro CLI for development.
 
 ## About the Hackathon
 
@@ -12,6 +15,27 @@ The **Kiro Hackathon** is a coding competition where developers build real-world
 - **💰 Prize Pool**: $17,000 across 10 winners
 - **🎯 Theme**: Open - build anything that solves a real problem
 - **🔗 More Info**: [dynamous.ai/kiro-hackathon](https://dynamous.ai/kiro-hackathon)
+
+## What is CORE Framework?
+
+CORE Framework is an interactive project planning tool that guides you through a structured methodology to transform vague ideas into comprehensive, actionable project plans. Whether you're a solo entrepreneur, developer, or small team, CORE helps you:
+
+- **Clarify** your project vision and goals
+- **Organize** features and requirements systematically  
+- **Refine** risks, constraints, and success metrics
+- **Equip** yourself with implementation-ready documentation
+
+### Three Implementation Options
+
+Choose the version that fits your workflow:
+
+| Version | Technology | Best For | Status |
+|---------|-----------|----------|--------|
+| **v1** | HTML/CSS/JS | Quick prototyping, static hosting | ✅ Complete |
+| **v2** | Python TUI | CLI enthusiasts, terminal workflows | ✅ Complete |
+| **v3** | React + Supabase | Production apps, cloud sync | ✅ Complete |
+
+All versions share the same proven 4-phase, 15-question methodology and generate identical output formats (Markdown, JSON, AI prompts).
 
 ## What's Included
 
@@ -24,35 +48,50 @@ This template provides everything you need to get started:
 
 ## Quick Start
 
-### 1. Clone This Template
+### Prerequisites
+- **Kiro CLI**: Install from [kiro.dev](https://kiro.dev)
+- **Node.js 18+**: For v3 React implementation
+- **Python 3.8+**: For v2 Python TUI
+- **Modern Browser**: For v1 HTML version
+
+### 1. Clone This Repository
 ```bash
-git clone https://github.com/coleam00/dynamous-kiro-hackathon
-cd dynamous-kiro-hackathon
+git clone https://github.com/yourusername/CORE-framework
+cd CORE-framework
 ```
 
-### 2. Run the Setup Wizard
+### 2. Choose Your Implementation
+
+#### v1: HTML/CSS/JS (Simplest)
 ```bash
-@quickstart
+cd v1-html
+# Open index.html in your browser
+python -m http.server 8000  # Or any static server
 ```
 
-This assumes you already have Kiro CLI installed and that you started with the `kiro-cli` command in your terminal.
+#### v2: Python TUI
+```bash
+cd v2-python
+pip install -r requirements.txt
+python -m core_framework.main
+```
 
-This interactive wizard will:
-- ✅ Fill out your steering documents with project details
-- ✅ Configure your development workflow
-- ✅ Set up Kiro CLI for your specific project
-- ✅ Explain all available prompts and features
+#### v3: React + Supabase (Most Features)
+```bash
+cd v3-react/frontend
+npm install
+npm run dev
+```
 
-### 3. Start Building
-Your project is now configured! Use these core prompts:
-- **`@prime`** - Load project context
-- **`@plan-feature`** - Plan new features
-- **`@execute`** - Implement plans systematically
-- **`@code-review`** - Review code quality
+See version-specific READMEs for detailed setup instructions.
 
-**Note:** Your typical workflow will be `@prime` → `@plan-feature` → `@execute` → `@code-review`, but feel free to change it however you want. These commands may require additional details (like what feature to plan or which plan file to execute), but Kiro will ask for these parameters after you invoke the command.
+### 3. Start Planning
+1. Create a new session with your project title
+2. Answer questions through the 4 phases
+3. Generate comprehensive documentation
+4. Export in your preferred format (Markdown, JSON, AI prompt)
 
-## Development Workflow (Customize this However You Want!)
+## Development Workflow (For Contributors)
 
 ### Initial Setup (One-Time)
 1. **Complete setup**: Run `@quickstart` to configure your project
