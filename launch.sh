@@ -81,18 +81,13 @@ launch_v2() {
         fi
     fi
     
-    # Activate venv and use its pip
-    if [ -f "venv/bin/activate" ]; then
-        source venv/bin/activate
-        VENV_PYTHON="venv/bin/python"
-    else
-        VENV_PYTHON="$PYTHON_CMD"
-    fi
+    # Use venv's python directly (no activation needed)
+    VENV_PYTHON="venv/bin/python"
     
     # Check if textual is installed in venv
     if ! $VENV_PYTHON -c "import textual" 2>/dev/null; then
         echo -e "${YELLOW}Installing dependencies in virtual environment...${NC}"
-        $VENV_PYTHON -m pip install -r requirements.txt --quiet
+        $VENV_PYTHON -m pip install -r requirements.txt
         if [ $? -ne 0 ]; then
             echo -e "${RED}Failed to install dependencies.${NC}"
             read -p "Press Enter to continue..."
@@ -105,7 +100,6 @@ launch_v2() {
     
     echo -e "\n${CYAN}Starting CORE Framework TUI...${NC}"
     $VENV_PYTHON -m core_framework.main
-    deactivate 2>/dev/null
 }
 
 # Launch v3
