@@ -73,9 +73,17 @@ launch_v2() {
     # Check/create virtual environment
     if [ ! -d "venv" ]; then
         echo -e "${YELLOW}Creating virtual environment...${NC}"
-        $PYTHON_CMD -m venv venv
+        $PYTHON_CMD -m venv venv 2>&1 | tee /tmp/venv_error.txt
         if [ $? -ne 0 ]; then
-            echo -e "${RED}Failed to create virtual environment.${NC}"
+            if grep -q "python3-venv" /tmp/venv_error.txt; then
+                echo -e "${RED}Missing python3-venv package.${NC}"
+                echo -e "${YELLOW}Please install it with:${NC}"
+                echo -e "  ${GREEN}sudo apt install python3-venv${NC}"
+                echo -e "or"
+                echo -e "  ${GREEN}sudo apt install python3.12-venv${NC}"
+            else
+                echo -e "${RED}Failed to create virtual environment.${NC}"
+            fi
             read -p "Press Enter to continue..."
             return 1
         fi
@@ -83,6 +91,16 @@ launch_v2() {
     
     # Use venv's python directly (no activation needed)
     VENV_PYTHON="venv/bin/python"
+    
+    # Verify venv has pip
+    if ! $VENV_PYTHON -m pip --version &>/dev/null; then
+        echo -e "${RED}Virtual environment is incomplete (missing pip).${NC}"
+        echo -e "${YELLOW}Please install python3-venv:${NC}"
+        echo -e "  ${GREEN}sudo apt install python3-venv${NC}"
+        echo -e "Then delete the venv folder and try again."
+        read -p "Press Enter to continue..."
+        return 1
+    fi
     
     # Check if textual is installed in venv
     if ! $VENV_PYTHON -c "import textual" 2>/dev/null; then
