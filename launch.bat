@@ -59,12 +59,26 @@ if errorlevel 1 (
 %PYTHON_CMD% --version
 echo.
 
+:: Check/create virtual environment
+if not exist "venv\" (
+    echo Creating virtual environment...
+    %PYTHON_CMD% -m venv venv
+    if errorlevel 1 (
+        echo Failed to create virtual environment.
+        pause
+        goto menu
+    )
+)
+
+:: Use venv Python
+set VENV_PYTHON=venv\Scripts\python.exe
+
 :: Check dependencies
 echo Checking dependencies...
-%PYTHON_CMD% -c "import textual" >nul 2>&1
+%VENV_PYTHON% -c "import textual" >nul 2>&1
 if errorlevel 1 (
-    echo Installing dependencies...
-    %PYTHON_CMD% -m pip install -r requirements.txt --quiet
+    echo Installing dependencies in virtual environment...
+    %VENV_PYTHON% -m pip install -r requirements.txt --quiet
     if errorlevel 1 (
         echo Failed to install dependencies.
         pause
@@ -77,7 +91,7 @@ if errorlevel 1 (
 
 echo.
 echo Starting CORE Framework TUI...
-%PYTHON_CMD% -m core_framework.main
+%VENV_PYTHON% -m core_framework.main
 pause
 goto menu
 

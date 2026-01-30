@@ -70,15 +70,42 @@ launch_v2() {
     echo -e "${YELLOW}Checking Python...${NC}"
     check_python || return 1
     
-    # Check if textual is installed
-    if ! $PYTHON_CMD -c "import textual" 2>/dev/null; then
-        install_deps "requirements.txt" || return 1
+    # Check/create virtual environment
+    if [ ! -d "venv" ]; then
+        echo -e "${YELLOW}Creating virtual environment...${NC}"
+        $PYTHON_CMD -m venv venv
+        if [ $? -ne 0 ]; then
+            echo -e "${RED}Failed to create virtual environment.${NC}"
+            read -p "Press Enter to continue..."
+            return 1
+        fi
+    fi
+    
+    # Activate venv and use its pip
+    if [ -f "venv/bin/activate" ]; then
+        source venv/bin/activate
+        VENV_PYTHON="venv/bin/python"
+    else
+        VENV_PYTHON="$PYTHON_CMD"
+    fi
+    
+    # Check if textual is installed in venv
+    if ! $VENV_PYTHON -c "import textual" 2>/dev/null; then
+        echo -e "${YELLOW}Installing dependencies in virtual environment...${NC}"
+        $VENV_PYTHON -m pip install -r requirements.txt --quiet
+        if [ $? -ne 0 ]; then
+            echo -e "${RED}Failed to install dependencies.${NC}"
+            read -p "Press Enter to continue..."
+            return 1
+        fi
+        echo -e "${GREEN}Dependencies installed.${NC}"
     else
         echo -e "${GREEN}Dependencies OK.${NC}"
     fi
     
     echo -e "\n${CYAN}Starting CORE Framework TUI...${NC}"
-    $PYTHON_CMD -m core_framework.main
+    $VENV_PYTHON -m core_framework.main
+    deactivate 2>/dev/null
 }
 
 # Launch v3

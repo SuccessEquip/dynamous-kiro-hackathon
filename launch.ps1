@@ -67,22 +67,44 @@ function Start-V2 {
         return
     }
     
-    # Check dependencies
-    Write-Host "Checking dependencies..." -ForegroundColor Yellow
-    & $pythonCmd -c "import textual" 2>$null
-    if ($LASTEXITCODE -ne 0) {
-        if (-not (Install-Dependencies $pythonCmd "requirements.txt")) {
+    # Check/create virtual environment
+    if (-not (Test-Path "venv")) {
+        Write-Host "Creating virtual environment..." -ForegroundColor Yellow
+        & $pythonCmd -m venv venv
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Failed to create virtual environment." -ForegroundColor Red
             Pop-Location
             Read-Host "Press Enter to continue"
             return
         }
+    }
+    
+    # Use venv Python
+    $venvPython = "venv\Scripts\python.exe"
+    if (-not (Test-Path $venvPython)) {
+        $venvPython = $pythonCmd
+    }
+    
+    # Check dependencies
+    Write-Host "Checking dependencies..." -ForegroundColor Yellow
+    & $venvPython -c "import textual" 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Installing dependencies in virtual environment..." -ForegroundColor Yellow
+        & $venvPython -m pip install -r requirements.txt --quiet
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Failed to install dependencies." -ForegroundColor Red
+            Pop-Location
+            Read-Host "Press Enter to continue"
+            return
+        }
+        Write-Host "Dependencies installed." -ForegroundColor Green
     }
     else {
         Write-Host "Dependencies OK." -ForegroundColor Green
     }
     
     Write-Host "`nStarting CORE Framework TUI..." -ForegroundColor Cyan
-    & $pythonCmd -m core_framework.main
+    & $venvPython -m core_framework.main
     Pop-Location
     Read-Host "Press Enter to continue"
 }
