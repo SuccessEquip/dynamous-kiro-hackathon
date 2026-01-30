@@ -2,18 +2,6 @@
 
 Interactive Project Planning Tool with 4-phase methodology using Python and Textual framework.
 
-## ⚠️ Known Issues
-
-The v2 Python TUI implementation is currently experiencing UI rendering issues:
-- Text input fields may be cut off or not fully visible
-- Some input fields may not respond to keyboard input
-- On-screen instructions are minimal
-- AI assistance configuration is not yet exposed in the UI
-
-**Recommended Alternative**: Use **v1 (HTML)** or **v3 (React)** for the best experience.
-
-We're working on fixing these issues. In the meantime, v1 and v3 provide full functionality with better UX.
-
 ## Quick Start
 
 ### Using the Launcher (Easiest)
