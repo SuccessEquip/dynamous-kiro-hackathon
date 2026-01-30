@@ -71,35 +71,47 @@ launch_v2() {
     check_python || return 1
     
     # Check/create virtual environment
-    if [ ! -d "venv" ]; then
+    if [ ! -d "venv" ] || [ ! -f "venv/bin/python" ]; then
         echo -e "${YELLOW}Creating virtual environment...${NC}"
         $PYTHON_CMD -m venv venv 2>&1 | tee /tmp/venv_error.txt
         if [ $? -ne 0 ]; then
             if grep -q "python3-venv" /tmp/venv_error.txt; then
-                echo -e "${RED}Missing python3-venv package.${NC}"
-                echo -e "${YELLOW}Please install it with:${NC}"
-                echo -e "  ${GREEN}sudo apt install python3-venv${NC}"
-                echo -e "or"
-                echo -e "  ${GREEN}sudo apt install python3.12-venv${NC}"
+                echo -e "${YELLOW}Installing python3-venv package...${NC}"
+                sudo apt install -y python3-venv
+                if [ $? -ne 0 ]; then
+                    echo -e "${RED}Failed to install python3-venv.${NC}"
+                    read -p "Press Enter to continue..."
+                    return 1
+                fi
+                echo -e "${YELLOW}Recreating virtual environment...${NC}"
+                rm -rf venv
+                $PYTHON_CMD -m venv venv
+                if [ $? -ne 0 ]; then
+                    echo -e "${RED}Failed to create virtual environment.${NC}"
+                    read -p "Press Enter to continue..."
+                    return 1
+                fi
             else
                 echo -e "${RED}Failed to create virtual environment.${NC}"
+                read -p "Press Enter to continue..."
+                return 1
             fi
-            read -p "Press Enter to continue..."
-            return 1
         fi
     fi
     
-    # Use venv's python directly (no activation needed)
+    # Use venv's python directly
     VENV_PYTHON="venv/bin/python"
     
     # Verify venv has pip
     if ! $VENV_PYTHON -m pip --version &>/dev/null; then
-        echo -e "${RED}Virtual environment is incomplete (missing pip).${NC}"
-        echo -e "${YELLOW}Please install python3-venv:${NC}"
-        echo -e "  ${GREEN}sudo apt install python3-venv${NC}"
-        echo -e "Then delete the venv folder and try again."
-        read -p "Press Enter to continue..."
-        return 1
+        echo -e "${YELLOW}Virtual environment incomplete, recreating...${NC}"
+        rm -rf venv
+        $PYTHON_CMD -m venv venv
+        if [ $? -ne 0 ]; then
+            echo -e "${RED}Failed to create virtual environment.${NC}"
+            read -p "Press Enter to continue..."
+            return 1
+        fi
     fi
     
     # Check if textual is installed in venv
